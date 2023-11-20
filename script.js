@@ -208,3 +208,4 @@ tasks.addEventListener('click', modifyTodo);
 tasks.addEventListener('change', markComplete);
 clrBtn.addEventListener('click', clearItems);
 window.addEventListener('DOMContentLoaded', displayTasks);
+checkUI();
