@@ -39,6 +39,7 @@ function createCheckbox(){
     checkBox.className = 'mark-complete';
     checkBox.type = 'checkbox';
     checkBox.name = 'mark-complete';
+
     return checkBox
 }
 
@@ -68,6 +69,7 @@ function createTaskBtn(anchorClasses, iconClasses){
 
     // Append the icon to the anchor element
     anchor.appendChild(icon);
+
     return anchor;
 }
 
@@ -75,6 +77,11 @@ function createTaskBtn(anchorClasses, iconClasses){
 function addTodoToTasks(){
     if(taskInput.value === ''){
         alert('Please input a task!');
+        return;
+    }
+
+    if(checkIfTaskExists(createTodo().textContent)){
+        alert('That item is already in the list!');
         return;
     }
 
@@ -165,7 +172,6 @@ function checkUI(){
     const checkedTasks = document.querySelectorAll('.checked').length;
     const taskCount = tasksList.length - checkedTasks;
 
-
     count.innerText = taskCount; 
 }
 
@@ -201,6 +207,12 @@ function removeTaskFromStorage(todo){
     tasksFromStorage = tasksFromStorage.filter(i => i !== todo);
 
     localStorage.setItem('ToDoTasks', JSON.stringify(tasksFromStorage));
+}
+
+// Check If Task Exists 
+function checkIfTaskExists(todo){
+    itemsFromStorage = getItemsFromStorage();
+    return itemsFromStorage.includes(todo);
 }
 
 addBtn.addEventListener('click', addTodoToTasks);
