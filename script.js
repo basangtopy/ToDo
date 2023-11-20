@@ -6,6 +6,15 @@ const count = document.getElementById('count');
 const clrBtn = document.querySelector('.clr');
 
 
+// Display items in storage 
+function displayTasks(){
+    const tasksFromStorage = getTasksFromStorage();
+
+    tasksFromStorage.forEach(todo => addItemToDOM(todo));
+
+    checkUI();
+}
+
 // Create task
 function createTodo(){
     const todo = taskInput.value;
@@ -17,6 +26,11 @@ function createTodo(){
     li.appendChild(taskModifyButtons());
 
     return li;
+}
+
+// Add Task to DOM 
+function addTodoToDom(todo){
+    tasks.appendChild(todo);
 }
 
 // Create Checkbox
@@ -64,7 +78,11 @@ function addTodoToTasks(){
         return;
     }
 
-    tasks.appendChild(createTodo());
+    // Add task to DOM 
+    addTodoToDom(createTodo());
+
+    // Add task to Storage 
+    addTaskToStorage(createTodo().textContent);
 
     checkUI();
 }
@@ -83,14 +101,22 @@ function modifyTodo(e){
 // Delete Todo 
 function deleteTask(todo){
     if(confirm('Are you sure you want to remove this from the tasks?')) {
+        // Remove from DOM 
         todo.remove();
+
+        // Remove from storage 
+        removeTaskFromStorage(todo.textContent);
     }
 }
 
 // Edit Todo 
 function editTodo(todo){
     taskInput.value = todo.textContent;
+    // Remove from DOM 
     todo.remove();
+
+    // Remove from storage 
+    removeTaskFromStorage(todo.textContent);
 }
 
 // Mark Completed
@@ -114,7 +140,11 @@ function markComplete(e){
 // Clear Tasks 
 function clearItems() {
     if(confirm('Are you sure you want to clear all tasks?')){
+        // Clear from DOM 
         tasks.innerHTML = '';
+
+        // Clear from locale storage 
+        localStorage.removeItem('ToDoTasks');
     }
 
     checkUI();
@@ -140,9 +170,41 @@ function checkUI(){
 }
 
 
+// Local Storage
+function getTasksFromStorage(){
+    let tasksFromStorage;
+
+    if(localStorage.getItem('ToDoTasks') === null) {
+        tasksFromStorage = [];
+    } else {
+        tasksFromStorage = JSON.parse(localStorage.getItem('ToDoTasks'));
+    }
+
+    return tasksFromStorage;
+}
+
+// Add Task To Storage 
+function addTaskToStorage(todo){
+    let tasksFromStorage = getTasksFromStorage();
+
+    // Add new ToDo to array 
+    tasksFromStorage.push(todo);
+
+    // Convert to JSON string and set to local storage 
+    localStorage.setItem('ToDoTasks', JSON.stringify(tasksFromStorage));
+}
+
+// Remove Task From Storage 
+function removeTaskFromStorage(todo){
+    let tasksFromStorage = getTasksFromStorage();
+
+    tasksFromStorage = tasksFromStorage.filter(i => i !== todo);
+
+    localStorage.setItem('ToDoTasks', JSON.stringify(tasksFromStorage));
+}
 
 addBtn.addEventListener('click', addTodoToTasks);
 tasks.addEventListener('click', modifyTodo);
 tasks.addEventListener('change', markComplete);
 clrBtn.addEventListener('click', clearItems);
-window.addEventListener('DOMContentLoaded', checkUI);
+window.addEventListener('DOMContentLoaded', displayTasks);
