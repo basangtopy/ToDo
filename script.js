@@ -220,6 +220,8 @@ function checkIfTaskExists(todo){
     return tasksFromStorage.includes(todo.toLowerCase());
 }
 
+
+// Event Listeners
 addBtn.addEventListener('click', addTodoToTasks);
 tasks.addEventListener('click', modifyTodo);
 tasks.addEventListener('change', markComplete);
