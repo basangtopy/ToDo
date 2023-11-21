@@ -4,6 +4,7 @@ const todos = document.getElementById('todos');
 const tasks = document.getElementById('tasks');
 const count = document.getElementById('count');
 const clrBtn = document.querySelector('.clr');
+const taskForm = document.getElementById('task-form');
 
 
 // Display items in storage 
@@ -75,7 +76,8 @@ function createTaskBtn(anchorClasses, iconClasses){
 }
 
 // Add Todo to Tasks
-function addTodoToTasks(){
+function addTodoToTasks(e){
+    e.preventDefault();
     const newTask = taskInput.value.trim();
     if(newTask === ''){
         alert('Please input a task!');
@@ -223,6 +225,7 @@ function checkIfTaskExists(todo){
 
 // Event Listeners
 addBtn.addEventListener('click', addTodoToTasks);
+taskForm.addEventListener('submit', addTodoToTasks);
 tasks.addEventListener('click', modifyTodo);
 tasks.addEventListener('change', markComplete);
 clrBtn.addEventListener('click', clearItems);
