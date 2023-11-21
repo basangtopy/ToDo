@@ -76,7 +76,7 @@ function createTaskBtn(anchorClasses, iconClasses){
 
 // Add Todo to Tasks
 function addTodoToTasks(){
-    const newTask = taskInput.value
+    const newTask = taskInput.value.trim();
     if(newTask === ''){
         alert('Please input a task!');
         return;
