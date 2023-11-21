@@ -10,14 +10,14 @@ const clrBtn = document.querySelector('.clr');
 function displayTasks(){
     const tasksFromStorage = getTasksFromStorage();
 
-    tasksFromStorage.forEach(todo => addItemToDOM(todo));
+    tasksFromStorage.forEach(todo => addTodoToDom(todo));
 
     checkUI();
 }
 
 // Create task
-function createTodo(){
-    const todo = taskInput.value;
+function createTodo(todo){
+    // const todo = taskInput.value;
     const li = document.createElement('li');
 
     li.className = 'task';
@@ -30,7 +30,8 @@ function createTodo(){
 
 // Add Task to DOM 
 function addTodoToDom(todo){
-    tasks.appendChild(todo);
+    const task = createTodo(todo);
+    tasks.appendChild(task);
 }
 
 // Create Checkbox
@@ -75,21 +76,22 @@ function createTaskBtn(anchorClasses, iconClasses){
 
 // Add Todo to Tasks
 function addTodoToTasks(){
-    if(taskInput.value === ''){
+    const newTask = taskInput.value
+    if(newTask === ''){
         alert('Please input a task!');
         return;
     }
 
-    if(checkIfTaskExists(createTodo().textContent)){
+    if(checkIfTaskExists(newTask)){
         alert('That item is already in the list!');
         return;
     }
 
     // Add task to DOM 
-    addTodoToDom(createTodo());
+    addTodoToDom(newTask);
 
     // Add task to Storage 
-    addTaskToStorage(createTodo().textContent);
+    addTaskToStorage(newTask);
 
     checkUI();
 }
@@ -134,10 +136,12 @@ function markComplete(e){
             checkBox.parentElement.style.textDecoration = 'line-through';
             checkBox.parentElement.style.color = 'hsl(236, 9%, 61%)';
             checkBox.parentElement.classList.add('checked');
+            checkBox.parentElement.querySelector('.edit-task').style.display = 'none';
         } else {
             checkBox.parentElement.style.textDecoration = 'none';
             checkBox.parentElement.style.color = 'black';
             checkBox.parentElement.classList.remove('checked');
+            checkBox.parentElement.querySelector('.edit-task').style.display = 'block';
         }
     }
 
@@ -211,8 +215,9 @@ function removeTaskFromStorage(todo){
 
 // Check If Task Exists 
 function checkIfTaskExists(todo){
-    itemsFromStorage = getItemsFromStorage();
-    return itemsFromStorage.includes(todo);
+    tasksFromStorage = getTasksFromStorage().map(item => item.toLowerCase());
+
+    return tasksFromStorage.includes(todo.toLowerCase());
 }
 
 addBtn.addEventListener('click', addTodoToTasks);
