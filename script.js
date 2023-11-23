@@ -8,11 +8,24 @@ const taskForm = document.getElementById('task-form');
 
 
 // Display items in storage 
-function displayTasks(){
+function displayTasks() {
     const tasksFromStorage = getTasksFromStorage();
 
-    tasksFromStorage.forEach(todo => addTodoToDom(todo));
+    tasksFromStorage.forEach(todo => {
+        const task = createTodo(todo.text);
+        tasks.appendChild(task);
 
+        if (todo.checked) {
+            const checkbox = task.querySelector('.mark-complete');
+            checkbox.checked = true;
+            checkbox.parentElement.style.textDecoration = 'line-through';
+            checkbox.parentElement.style.color = 'hsl(236, 9%, 61%)';
+            checkbox.parentElement.classList.add('checked');
+            checkbox.parentElement.querySelector('.edit-task').style.display = 'none';
+        }
+    });
+
+    taskInput.value = '';
     checkUI();
 }
 
@@ -78,8 +91,11 @@ function createTaskBtn(anchorClasses, iconClasses){
 // Add Todo to Tasks
 function addTodoToTasks(e){
     e.preventDefault();
-    const newTask = taskInput.value.trim();
-    if(newTask === ''){
+    const newTask = {
+        text: taskInput.value.trim(),
+        checked: false
+    } 
+    if(newTask.text === ''){
         alert('Please input a task!');
         return;
     }
@@ -90,10 +106,13 @@ function addTodoToTasks(e){
     }
 
     // Add task to DOM 
-    addTodoToDom(newTask);
+    addTodoToDom(newTask.text);
 
     // Add task to Storage 
     addTaskToStorage(newTask);
+
+    // Clear Task Input Field 
+    taskInput.value = '';
 
     checkUI();
 }
@@ -105,7 +124,6 @@ function modifyTodo(e){
     } else if(e.target.parentElement.classList.contains('edit-task')){
         editTodo(e.target.parentElement.parentElement.parentElement);
     }
-
     checkUI();
 }
 
@@ -126,7 +144,7 @@ function editTodo(todo){
     // Remove from DOM 
     todo.remove();
 
-    // Remove from storage 
+    // Remove from storage
     removeTaskFromStorage(todo.textContent);
 }
 
@@ -134,16 +152,22 @@ function editTodo(todo){
 function markComplete(e){
  let checkBox = e.target;
     if(checkBox.classList.contains('mark-complete')){
+        const taskText = checkBox.parentElement.textContent.trim();
+
         if(checkBox.checked){
             checkBox.parentElement.style.textDecoration = 'line-through';
             checkBox.parentElement.style.color = 'hsl(236, 9%, 61%)';
             checkBox.parentElement.classList.add('checked');
             checkBox.parentElement.querySelector('.edit-task').style.display = 'none';
+
+            saveTaskState(taskText, true);
         } else {
             checkBox.parentElement.style.textDecoration = 'none';
             checkBox.parentElement.style.color = 'black';
             checkBox.parentElement.classList.remove('checked');
             checkBox.parentElement.querySelector('.edit-task').style.display = 'block';
+
+            saveTaskState(taskText, false);
         }
     }
 
@@ -153,6 +177,9 @@ function markComplete(e){
 // Clear Tasks 
 function clearItems() {
     if(confirm('Are you sure you want to clear all tasks?')){
+        // Clear Task Input 
+        taskInput.value = '';
+        
         // Clear from DOM 
         tasks.innerHTML = '';
 
@@ -165,7 +192,6 @@ function clearItems() {
 
 // Check UI 
 function checkUI(){
-    taskInput.value = '';
     const tasksList = document.querySelectorAll('li');
 
     if(tasksList.length === 0){
@@ -210,16 +236,30 @@ function addTaskToStorage(todo){
 function removeTaskFromStorage(todo){
     let tasksFromStorage = getTasksFromStorage();
 
-    tasksFromStorage = tasksFromStorage.filter(i => i !== todo);
+    tasksFromStorage = tasksFromStorage.filter(i => i.text !== todo);
+
+    localStorage.setItem('ToDoTasks', JSON.stringify(tasksFromStorage));
+}
+
+// Save Task State to localStorage
+function saveTaskState(taskText, isChecked) {
+    let tasksFromStorage = getTasksFromStorage();
+
+    tasksFromStorage = tasksFromStorage.map(task => {
+        if (task.text === taskText) {
+            return { text: task.text, checked: isChecked };
+        }
+        return task;
+    });
 
     localStorage.setItem('ToDoTasks', JSON.stringify(tasksFromStorage));
 }
 
 // Check If Task Exists 
 function checkIfTaskExists(todo){
-    tasksFromStorage = getTasksFromStorage().map(item => item.toLowerCase());
+    tasksFromStorage = getTasksFromStorage().map(item => item.text.toLowerCase());
 
-    return tasksFromStorage.includes(todo.toLowerCase());
+    return tasksFromStorage.includes(todo.text.toLowerCase());
 }
 
 
