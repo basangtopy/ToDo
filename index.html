@@ -9,7 +9,17 @@
 </head>
 <body>
     <div class="container">
-        <h1 id="logo">TODO</h1>
+        <div id="logo-toggle">
+            <h1 id="logo">TODO</h1>
+
+            <label class="toggle-checkbox">
+                <input type="checkbox" id="toggleCheckbox">
+                <span class="checkmark">
+                  <img src="images/icon-moon.svg" alt="Unchecked" class="unchecked-icon">
+                  <img src="images/icon-sun.svg" alt="Checked" class="checked-icon">
+                </span>
+              </label>
+        </div>
         <form id="task-form">
             <input type="text" id="task-input" placeholder="Input a new task...">
 

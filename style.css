@@ -8,7 +8,7 @@
 
 body {
     font-family: 'Josefin Sans', sans-serif;
-    background: url('images/bg-desktop-light.jpg') no-repeat;
+    background: url('images/bg-desktop-light.jpg'); background-repeat: no-repeat;
     display: flex;
 }
 
@@ -18,11 +18,60 @@ body {
     width: min(90%, 500px);
 }
 
+#logo-toggle {
+    display: flex;
+    justify-content: space-between;
+}
+
 #logo {
     color: hsl(0, 0%, 98%);
     letter-spacing: 0.5em;
     margin-bottom: 3%;
 }
+
+.toggle-checkbox {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+  
+  /* Hide the default checkbox */
+  .toggle-checkbox input {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
+  /* Styles for the checkmark area */
+  .checkmark {
+    position: relative;
+    display: inline-block;
+    width: 27px;
+    height: 27px;
+  }
+  
+  /* Styles for the icons */
+  .unchecked-icon,
+  .checked-icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+  }
+  
+  /* Show the checked icon when the checkbox is checked */
+  .toggle-checkbox input:checked ~ .checkmark .checked-icon {
+    display: block;
+  }
+  
+  /* Show the unchecked icon when the checkbox is unchecked */
+  .toggle-checkbox input:not(:checked) ~ .checkmark .unchecked-icon {
+    display: block;
+  }
+
 
 #task-form {
     display: flex;
@@ -35,12 +84,13 @@ body {
 }
 
 #task-form #task-input {
+    background: transparent;
     font-size: 1rem;
     outline: none;
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     border: none;
-    width: 70%;
+    width: 90%;
 }
 
 #task-form #add-btn {
@@ -62,6 +112,7 @@ body {
 
 #tasks {
     list-style: none;
+    color: hsl(235, 21%, 11%);
 }
 
 .task {

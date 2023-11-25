@@ -1,3 +1,4 @@
+const body = document.querySelector('body');
 const taskInput = document.getElementById('task-input');
 const addBtn = document.getElementById('add-btn');
 const todos = document.getElementById('todos');
@@ -5,6 +6,16 @@ const tasks = document.getElementById('tasks');
 const count = document.getElementById('count');
 const clrBtn = document.querySelector('.clr');
 const taskForm = document.getElementById('task-form');
+const toggleCheckbox = document.getElementById('toggleCheckbox');
+let mode = {
+    isDarkMode: undefined
+};
+
+if(getModeFromStorage(mode)[0].isDarkMode === true){
+    toggleCheckbox.checked = true;
+} else if(getModeFromStorage(mode)[0].isDarkMode === false){
+    toggleCheckbox.checked = false;
+}
 
 
 // Display items in storage 
@@ -156,14 +167,22 @@ function markComplete(e){
 
         if(checkBox.checked){
             checkBox.parentElement.style.textDecoration = 'line-through';
-            checkBox.parentElement.style.color = 'hsl(236, 9%, 61%)';
+            if(toggleCheckbox.checked){
+                checkBox.parentElement.style.color = 'hsl(233, 14%, 35%)';
+            }else{
+                checkBox.parentElement.style.color = 'hsl(236, 9%, 61%)';
+            }
             checkBox.parentElement.classList.add('checked');
             checkBox.parentElement.querySelector('.edit-task').style.display = 'none';
 
             saveTaskState(taskText, true);
         } else {
             checkBox.parentElement.style.textDecoration = 'none';
-            checkBox.parentElement.style.color = 'black';
+            if(toggleCheckbox.checked){
+                checkBox.parentElement.style.color = 'hsl(234, 39%, 85%)';
+            }else{
+                checkBox.parentElement.style.color = 'hsl(235, 21%, 11%)';
+            }
             checkBox.parentElement.classList.remove('checked');
             checkBox.parentElement.querySelector('.edit-task').style.display = 'block';
 
@@ -199,6 +218,9 @@ function checkUI(){
     } else {
         todos.style.display = 'block';
     }
+
+    // Maintain The Applied Mode 
+    toggleMode();
 
     // Task count
     const checkedTasks = document.querySelectorAll('.checked').length;
@@ -262,6 +284,76 @@ function checkIfTaskExists(todo){
     return tasksFromStorage.includes(todo.text.toLowerCase());
 }
 
+// Toggle Dark and Light Mode
+function toggleMode(){
+    if(toggleCheckbox.checked){
+        console.log("Switched to Dark Mode");
+        body.style.background = "url('images/bg-desktop-dark.jpg')";
+        body.style.backgroundRepeat = "no-repeat";
+        body.style.backgroundColor = "hsl(235, 21%, 11%)";
+        taskForm.style.background = "hsl(235, 24%, 19%)";
+        taskInput.style.color = "hsl(234, 39%, 85%)";
+        todos.style.backgroundColor = "hsl(235, 24%, 19%)";
+        tasks.style.color = "hsl(234, 39%, 85%)";
+        document.querySelectorAll('.task').forEach(task => task.style.borderBottomColor = "hsl(237, 14%, 26%)");
+        document.querySelectorAll('.mark-complete').forEach(box => {box.style.borderColor = "hsl(237, 14%, 26%)";
+        if(box.checked){
+            box.parentElement.style.color = 'hsl(233, 14%, 35%)';
+        }else{
+            box.parentElement.style.color = 'hsl(234, 39%, 85%)';
+        };
+    });
+
+        darkMode = true;
+        updateModeInStorage(darkMode);
+    }else{
+        console.log("Light mode is activated");
+        body.style.background = "url('images/bg-desktop-light.jpg')";
+        body.style.backgroundRepeat = "no-repeat";
+        body.style.backgroundColor = "#fff";
+        taskForm.style.background = "#fff";
+        taskInput.style.color = "hsl(235, 21%, 11%)";
+        todos.style.backgroundColor = "#fff";
+        tasks.style.color = "hsl(235, 21%, 11%)";
+        document.querySelectorAll('.task').forEach(task => task.style.borderBottomColor = "hsl(236, 33%, 92%)");
+        document.querySelectorAll('.mark-complete').forEach(box => {box.style.borderColor = "hsl(236, 33%, 92%)";
+        if(box.checked){
+            box.parentElement.style.color = 'hsl(236, 9%, 61%)';
+        }else{
+            box.parentElement.style.color = 'hsl(235, 21%, 11%)';
+        };
+    });
+
+        darkMode = false;
+        updateModeInStorage(darkMode);
+    }
+}
+
+
+// Storage For App Mode 
+function getModeFromStorage(mode){
+    let modeFromStorage;
+
+    if(localStorage.getItem('Mode') === null) {
+        modeFromStorage = [mode];
+    } else {
+        modeFromStorage = JSON.parse(localStorage.getItem('Mode'));
+    }
+
+    return modeFromStorage;
+}
+
+// Update Mode to Storage
+function updateModeInStorage(darkMode) {
+    let modeFromStorage = getModeFromStorage();
+
+    modeFromStorage = modeFromStorage.map(() => {
+        return { isDarkMode: darkMode};
+    });
+
+    localStorage.setItem('Mode', JSON.stringify(modeFromStorage));
+}
+
 
 // Event Listeners
 addBtn.addEventListener('click', addTodoToTasks);
@@ -269,5 +361,5 @@ taskForm.addEventListener('submit', addTodoToTasks);
 tasks.addEventListener('click', modifyTodo);
 tasks.addEventListener('change', markComplete);
 clrBtn.addEventListener('click', clearItems);
+toggleCheckbox.addEventListener('change', toggleMode);
 window.addEventListener('DOMContentLoaded', displayTasks);
-checkUI();
