@@ -34,8 +34,7 @@ body {
     display: inline-block;
     cursor: pointer;
   }
-  
-  /* Hide the default checkbox */
+   
   .toggle-checkbox input {
     opacity: 0;
     position: absolute;
@@ -43,7 +42,6 @@ body {
     left: 0;
   }
   
-  /* Styles for the checkmark area */
   .checkmark {
     position: relative;
     display: inline-block;
@@ -51,7 +49,6 @@ body {
     height: 27px;
   }
   
-  /* Styles for the icons */
   .unchecked-icon,
   .checked-icon {
     position: absolute;
@@ -62,12 +59,10 @@ body {
     display: none;
   }
   
-  /* Show the checked icon when the checkbox is checked */
   .toggle-checkbox input:checked ~ .checkmark .checked-icon {
     display: block;
   }
   
-  /* Show the unchecked icon when the checkbox is unchecked */
   .toggle-checkbox input:not(:checked) ~ .checkmark .unchecked-icon {
     display: block;
   }
